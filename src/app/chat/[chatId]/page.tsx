@@ -1,13 +1,5 @@
-// src/app/chat/[chatId]/page.tsx
-
 import ChatSession from "@/components/ChatSession";
 
-type ChatPageProps = {
-  params: {
-    chatId: string;
-  };
-};
-
-export default function ChatPage({ params }: ChatPageProps) {
+export default function ChatPage({ params }: { params: { chatId: string } }) {
   return <ChatSession chatId={params.chatId} />;
 }
