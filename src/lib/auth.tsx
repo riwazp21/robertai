@@ -1,4 +1,4 @@
-import { DefaultSession } from "next-auth";
+import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { supabase } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
@@ -22,7 +22,7 @@ export const authOptions: AuthOptions = {
         }
 
         const { data: user, error } = await supabase
-          .from("User")
+          .from("users")
           .select("*")
           .eq("email", email)
           .single();
