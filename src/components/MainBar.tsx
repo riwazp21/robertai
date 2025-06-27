@@ -17,8 +17,6 @@ export default function MainBar({
   onSubmitNewChat,
   onCloseModal,
 }: MainBarProps) {
-  const [newTitle, setNewTitle] = useState("");
-
   return (
     <main className="flex-1 relative bg-gray-50 border-l h-full overflow-y-auto">
       {/* Overlay Modal for New Chat */}

@@ -26,14 +26,28 @@ export default function SelectorAgentPrototype({
     fetch("/database/48Laws.csv")
       .then((response) => response.text())
       .then((csvText) => {
+        // Papa.parse(csvText, {
+        //   header: true,
+        //   complete: (result) => {
+        //     const parsed = result.data as any[];
+        //     const extracted: Law[] = parsed.map((row) => ({
+        //       number: row["LAW NUMBER"],
+        //       title: row["LAW"],
+        //     }));
+        //     setLaws(extracted);
+        //   },
+        // });
+
         Papa.parse(csvText, {
           header: true,
           complete: (result) => {
-            const parsed = result.data as any[];
+            const parsed = result.data as { [key: string]: string }[];
+
             const extracted: Law[] = parsed.map((row) => ({
               number: row["LAW NUMBER"],
               title: row["LAW"],
             }));
+
             setLaws(extracted);
           },
         });

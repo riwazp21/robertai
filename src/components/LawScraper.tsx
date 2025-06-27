@@ -34,13 +34,25 @@ export default function LawScraper({
         Papa.parse(csvText, {
           header: true,
           complete: (result) => {
-            const parsed = result.data as any[];
+            type Law = {
+              "LAW NUMBER": string | number;
+              LAW: string;
+              JUDGEMENT: string;
+              SUMMARY: string;
+            };
+
+            const parsed = result.data as Law[];
+
             const matching = parsed
               .filter((row) =>
-                selectedLaws.includes(parseInt(row["LAW NUMBER"], 10))
+                selectedLaws.includes(
+                  typeof row["LAW NUMBER"] === "string"
+                    ? parseInt(row["LAW NUMBER"])
+                    : row["LAW NUMBER"]
+                )
               )
               .map((row) => ({
-                number: row["LAW NUMBER"],
+                number: String(row["LAW NUMBER"]), // 🔥 force it to be a string
                 title: row["LAW"],
                 judgment: row["JUDGEMENT"],
                 summary: row["SUMMARY"],

@@ -19,7 +19,7 @@ export default function MessageInput({ onSend }: MessageInputProps) {
     }
   }, [input]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (input.trim() === "") return;
     onSend(input.trim());
@@ -34,12 +34,25 @@ export default function MessageInput({ onSend }: MessageInputProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-end gap-2">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (input.trim() === "") return;
+        onSend(input.trim());
+        setInput("");
+      }}
+      className="flex items-end gap-2"
+    >
       <textarea
         ref={textareaRef}
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            e.currentTarget.form?.requestSubmit(); // triggers the form submit cleanly
+          }
+        }}
         placeholder="Type your decree..."
         rows={1}
         className="flex-1 p-3 rounded-xl border-2 border-[#9c1c1c] bg-white text-gray-800 font-serif placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#c0392b] transition resize-none max-h-40 overflow-y-auto"
