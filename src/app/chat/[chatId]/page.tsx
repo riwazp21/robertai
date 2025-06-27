@@ -7,6 +7,6 @@ interface ChatPageProps {
   };
 }
 
-export default function ChatPage({ params }: ChatPageProps) {
+export default async function ChatPage({ params }: ChatPageProps) {
   return <ChatSession chatId={params.chatId} />;
 }
