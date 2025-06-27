@@ -19,12 +19,12 @@ export default function MessageInput({ onSend }: MessageInputProps) {
     }
   }, [input]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (input.trim() === "") return;
-    onSend(input.trim());
-    setInput("");
-  };
+  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   if (input.trim() === "") return;
+  //   onSend(input.trim());
+  //   setInput("");
+  // };
 
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
   //   if (e.key === "Enter" && !e.shiftKey) {
