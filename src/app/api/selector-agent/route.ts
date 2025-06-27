@@ -43,8 +43,12 @@ export async function POST(req: NextRequest) {
 
     const parsed = JSON.parse(match[0]);
     return NextResponse.json({ selected_laws: parsed.selected_laws });
-  } catch (err: any) {
-    console.error("API Route error:", err);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("API Route error:", err.message);
+    } else {
+      console.error("Unknown error:", err);
+    }
     return NextResponse.json(
       { error: "Failed to process Selector Agent request." },
       { status: 500 }

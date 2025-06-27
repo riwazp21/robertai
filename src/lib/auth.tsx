@@ -1,4 +1,4 @@
-import { AuthOptions } from "next-auth";
+import { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { supabase } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
