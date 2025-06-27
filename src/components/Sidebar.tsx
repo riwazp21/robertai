@@ -1,18 +1,16 @@
 "use client";
 
+import { useRouter, usePathname } from "next/navigation";
+
 interface SidebarProps {
   chats: { id: string; title: string }[];
-  activeChatId: string | null;
-  onSelectChat: (chatId: string) => void;
   onNewChat: () => void;
 }
 
-export default function Sidebar({
-  chats,
-  activeChatId,
-  onSelectChat,
-  onNewChat,
-}: SidebarProps) {
+export default function Sidebar({ chats, onNewChat }: SidebarProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   return (
     <aside className="w-64 bg-[#fdf9f3] text-gray-800 p-4 border-r border-[#e0d5c0] h-full overflow-y-auto font-serif shadow-inner">
       {/* Sticky New Chat Button */}
@@ -47,14 +45,15 @@ export default function Sidebar({
       {/* Chat List */}
       <ul className="space-y-2">
         {chats.map((chat) => {
-          const decryptedTitle = chat.title; // 🧠 Decrypt here once
+          const decryptedTitle = chat.title;
+          const isActive = pathname === `/dashboard/c/${chat.id}`;
 
           return (
             <li key={chat.id}>
               <button
-                onClick={() => onSelectChat(chat.id)}
+                onClick={() => router.push(`/dashboard/c/${chat.id}`)}
                 className={`w-full text-left px-3 py-2 rounded-md truncate transition-all duration-150 ${
-                  activeChatId === chat.id
+                  isActive
                     ? "bg-[#f5ebe0] border-l-4 border-[#c0392b] font-semibold text-[#7b1e1e] shadow"
                     : "hover:bg-[#f0e6dd] text-gray-700"
                 }`}

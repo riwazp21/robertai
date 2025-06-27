@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-//import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import MainBar from "@/components/MainBar";
 import TopBar from "@/components/TopBar";
@@ -14,10 +14,8 @@ interface Chat {
 export default function Dashboard() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [showNewChatModal, setShowNewChatModal] = useState(false);
-  const [activeChatId, setActiveChatId] = useState<string | null>(null);
-  //const router = useRouter();
+  const router = useRouter();
 
-  // Fetch user’s chats
   const fetchChats = async () => {
     const res = await fetch("/api/chats");
     const data = await res.json();
@@ -37,9 +35,9 @@ export default function Dashboard() {
 
     const data = await res.json();
     if (data.chatId) {
-      setActiveChatId(data.chatId);
+      router.push(`/dashboard/c/${data.chatId}`); // ✅ full route
       setShowNewChatModal(false);
-      await fetchChats(); // ✅ Refresh chat list
+      await fetchChats(); // ✅ refresh chat list
     }
   };
 
@@ -48,14 +46,9 @@ export default function Dashboard() {
       <TopBar />
 
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar
-          chats={chats}
-          activeChatId={activeChatId}
-          onSelectChat={setActiveChatId}
-          onNewChat={() => setShowNewChatModal(true)}
-        />
+        <Sidebar chats={chats} onNewChat={() => setShowNewChatModal(true)} />
+
         <MainBar
-          activeChatId={activeChatId}
           showNewChatModal={showNewChatModal}
           onSubmitNewChat={handleCreateNewChat}
           onCloseModal={() => setShowNewChatModal(false)}

@@ -1,18 +1,14 @@
 "use client";
 
-//import { useState } from "react";
-import ChatSession from "@/components/ChatSession";
 import NewChatModal from "@/components/NewChatModal";
 
 interface MainBarProps {
-  activeChatId: string | null;
   showNewChatModal: boolean;
   onSubmitNewChat: (title: string) => void;
   onCloseModal: () => void;
 }
 
 export default function MainBar({
-  activeChatId,
   showNewChatModal,
   onSubmitNewChat,
   onCloseModal,
@@ -30,14 +26,10 @@ export default function MainBar({
       )}
 
       {/* No Chat Selected */}
-      {!activeChatId && !showNewChatModal && (
+      {!showNewChatModal && (
         <div className="flex items-center justify-center h-full text-gray-500">
           Select or create a chat to get started.
         </div>
-      )}
-      {/* ChatSession */}
-      {activeChatId && !showNewChatModal && (
-        <ChatSession chatId={activeChatId} />
       )}
     </main>
   );
