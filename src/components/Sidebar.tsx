@@ -1,8 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { decrypt } from "@/lib/encrypt";
-
 interface SidebarProps {
   chats: { id: string; title: string }[];
   activeChatId: string | null;
