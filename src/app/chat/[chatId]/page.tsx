@@ -8,6 +8,5 @@ interface ChatPageProps {
 }
 
 export default function ChatPage({ params }: ChatPageProps) {
-  const { chatId } = params;
-  return <ChatSession chatId={chatId} />;
+  return <ChatSession chatId={params.chatId} />;
 }
