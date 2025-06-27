@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [showNewChatModal, setShowNewChatModal] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
-  const router = useRouter();
+  //const router = useRouter();
 
   // Fetch user’s chats
   const fetchChats = async () => {
