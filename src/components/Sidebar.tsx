@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
+import { decrypt } from "@/lib/encrypt"; // 🧠 Make sure this is imported
 
 interface SidebarProps {
   chats: { id: string; title: string }[];
@@ -45,13 +46,13 @@ export default function Sidebar({ chats, onNewChat }: SidebarProps) {
       {/* Chat List */}
       <ul className="space-y-2">
         {chats.map((chat) => {
-          const decryptedTitle = chat.title;
-          const isActive = pathname === `/dashboard/c/${chat.id}`;
+          const decryptedTitle = decrypt(chat.title); // 👈 This was missing
+          const isActive = pathname === `/chat/${chat.id}`;
 
           return (
             <li key={chat.id}>
               <button
-                onClick={() => router.push(`/dashboard/c/${chat.id}`)}
+                onClick={() => router.push(`/chat/${chat.id}`)}
                 className={`w-full text-left px-3 py-2 rounded-md truncate transition-all duration-150 ${
                   isActive
                     ? "bg-[#f5ebe0] border-l-4 border-[#c0392b] font-semibold text-[#7b1e1e] shadow"

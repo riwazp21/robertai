@@ -15,6 +15,7 @@ model User {
   password  String?
   chats     Chat[]
   createdAt DateTime @default(now())
+  @@map("users")
 }
 
 model Chat {
