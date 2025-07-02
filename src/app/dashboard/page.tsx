@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
-import MainBar from "@/components/MainBar";
+//import MainBar from "@/components/MainBar";
 import TopBar from "@/components/TopBar";
 import NewChatModal from "@/components/NewChatModal";
 
@@ -14,6 +14,12 @@ interface Chat {
 
 export default function DashboardPage() {
   const [chats, setChats] = useState<Chat[]>([]);
+  useEffect(() => {
+    if (chats.length > 0) {
+      console.log("Chats loaded:", chats);
+    }
+  }, [chats]);
+
   const [showNewChatModal, setShowNewChatModal] = useState(false);
   const router = useRouter();
 
@@ -61,7 +67,18 @@ export default function DashboardPage() {
       <TopBar />
 
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar chats={chats} onNewChat={() => setShowNewChatModal(true)} />
+        <Sidebar />
+        <main className="flex-1 flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-2">
+              Welcome to your Dashboard
+            </h1>
+            <p className="text-gray-600">
+              Click <span className="font-semibold">New Chat</span> in the
+              sidebar to start a conversation!
+            </p>
+          </div>
+        </main>
       </div>
 
       {showNewChatModal && (

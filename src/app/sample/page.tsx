@@ -4,22 +4,15 @@ import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import MessageInput from "@/components/MessageInput";
+//import TopBar from "@/components/TopBar"; // 👈 import your heading
+import HeadTopBar from "@/components/HeadTopBar";
 
 interface Message {
   role: "user" | "advisor";
   text: string;
 }
 
-interface RawMessage {
-  userMessage: string;
-  advisorMessage: string;
-}
-
-interface ChatSessionProps {
-  chatId: string;
-}
-
-export default function ChatSession({ chatId }: ChatSessionProps) {
+export default function Sample() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
@@ -35,24 +28,6 @@ export default function ChatSession({ chatId }: ChatSessionProps) {
     const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
     setIsAutoScrollEnabled(isNearBottom);
   };
-
-  useEffect(() => {
-    const fetchMessages = async () => {
-      const res = await fetch(`/api/messages?chatId=${chatId}`);
-      const data = await res.json();
-
-      const formatted: Message[] = (data.messages as RawMessage[]).flatMap(
-        (m) => [
-          { role: "user", text: m.userMessage },
-          { role: "advisor", text: m.advisorMessage },
-        ]
-      );
-
-      setMessages(formatted);
-    };
-
-    fetchMessages();
-  }, [chatId]);
 
   const handleSend = async (text: string) => {
     const userMessage: Message = { role: "user", text };
@@ -70,16 +45,6 @@ export default function ChatSession({ chatId }: ChatSessionProps) {
 
     setMessages((prev) => [...prev, { role: "advisor", text: fullReply }]);
     setLoading(false);
-
-    await fetch("/api/save-message", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chatId,
-        userMessage: text,
-        advisorMessage: fullReply,
-      }),
-    });
   };
 
   useEffect(() => {
@@ -89,7 +54,9 @@ export default function ChatSession({ chatId }: ChatSessionProps) {
   }, [messages, loading, isAutoScrollEnabled]);
 
   return (
-    <div className="flex flex-col h-full bg-[#fdf9f3] overflow-hidden font-serif">
+    <div className="flex flex-col h-screen bg-[#fdf9f3] font-serif">
+      <HeadTopBar />
+
       {/* Message Feed */}
       <div
         ref={messagesContainerRef}
@@ -128,7 +95,7 @@ export default function ChatSession({ chatId }: ChatSessionProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
+      {/* Input Box */}
       <div className="px-8 pt-2 pb-4">
         <MessageInput onSend={handleSend} />
       </div>

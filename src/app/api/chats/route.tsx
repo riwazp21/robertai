@@ -1,20 +1,29 @@
 // /app/api/chats/route.ts
-import { cookies } from "next/headers";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { decrypt } from "@/lib/encrypt"; // ✅ import decrypt
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const cookieStore = cookies();
-    const userId = (await cookieStore).get("user_id")?.value;
+    const session = await getServerSession(authOptions);
 
-    if (!userId) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Find user by email from session
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const chats = await prisma.chat.findMany({
-      where: { userId },
+      where: { userId: user.id },
       select: { id: true, title: true },
       orderBy: { createdAt: "desc" },
     });

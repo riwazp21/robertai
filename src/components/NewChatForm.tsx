@@ -14,21 +14,38 @@ export default function NewChatForm({ onCreated }: NewChatFormProps) {
     if (!title.trim()) return;
     setCreating(true);
 
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title }),
-    });
+    try {
+      const res = await fetch("/app/api/create-chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title }),
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      onCreated(data.chat.id);
+      // Check if response is JSON before parsing
+      const contentType = res.headers.get("content-type");
+      if (!res.ok || !contentType?.includes("application/json")) {
+        const fallbackText = await res.text();
+        throw new Error(
+          `Unexpected response: ${res.status}. Body:\n${fallbackText}`
+        );
+      }
+
+      const data = await res.json();
+      onCreated(data.chatId);
       setTitle("");
-    } else {
-      alert(data.error || "Failed to create chat");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert("❌ Failed to create chat:\n" + err.message);
+        console.error("Chat creation error:", err);
+      } else {
+        alert("❌ Failed to create chat due to an unknown error.");
+        console.error("Unknown error:", err);
+      }
+    } finally {
+      setCreating(false);
     }
-
-    setCreating(false);
   };
 
   return (
