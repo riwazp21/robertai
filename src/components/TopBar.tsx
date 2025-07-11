@@ -7,9 +7,9 @@ interface TopBarProps {
 export default function TopBar({ onMenuClick }: TopBarProps) {
   return (
     <header className="w-full bg-gradient-to-r from-[#7b1e1e] to-[#9c1c1c] py-2 px-6 shadow-lg text-center flex items-center">
-      {/* Hamburger menu - only on mobile */}
+      {/* Hamburger menu - visible on all screen sizes */}
       <button
-        className="text-[#f1c40f] text-2xl mr-2 md:hidden"
+        className="text-[#f1c40f] text-2xl mr-2"
         onClick={onMenuClick}
         aria-label="Open sidebar menu"
       >
