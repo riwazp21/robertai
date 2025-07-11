@@ -21,7 +21,13 @@ export default function DashboardPage() {
   }, [chats]);
 
   const [showNewChatModal, setShowNewChatModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
+
+  // Debug: Log sidebar state changes
+  useEffect(() => {
+    console.log("Sidebar:", sidebarOpen ? "OPEN" : "CLOSED");
+  }, [sidebarOpen]);
 
   // Load all chats
   const fetchChats = async () => {
@@ -64,18 +70,23 @@ export default function DashboardPage() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <TopBar />
+      <TopBar onMenuClick={() => setSidebarOpen((open) => !open)} />
 
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Sidebar overlays on top of main content */}
+        {sidebarOpen && (
+          <div className="absolute inset-0 z-40">
+            <Sidebar />
+          </div>
+        )}
+
         <main className="flex-1 flex items-center justify-center bg-gray-50">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-2">
-              Welcome to your Dashboard
-            </h1>
+            <h1 className="text-2xl font-bold mb-2">Welcome to RobertAI</h1>
             <p className="text-gray-600">
-              Click <span className="font-semibold">New Chat</span> in the
-              sidebar to start a conversation!
+              {sidebarOpen
+                ? "Click New Chat in the sidebar to start a conversation!"
+                : "Click the hamburger menu ☰ to open the sidebar and start a new chat!"}
             </p>
           </div>
         </main>

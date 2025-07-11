@@ -19,6 +19,107 @@ interface ChatSessionProps {
   chatId: string;
 }
 
+// Component to handle advisor message with preview/expand functionality
+function AdvisorMessage({ text }: { text: string }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Parse the message into sections
+  const parseMessage = (message: string) => {
+    const lines = message.split("\n");
+    const sections = {
+      firstParagraph: "",
+      relevantLaws: "",
+      otherContent: "",
+    };
+
+    let currentSection = "firstParagraph";
+    let firstParagraphFound = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      // Skip empty lines
+      if (!line) continue;
+
+      // Check if this is the first paragraph (not bolded)
+      if (!firstParagraphFound && !line.startsWith("**")) {
+        sections.firstParagraph += line + "\n";
+        firstParagraphFound = true;
+        continue;
+      }
+
+      // Check if this is "Relevant Laws" section
+      if (
+        line.includes("**Relevant Laws**") ||
+        line.includes("**Relevant Law**")
+      ) {
+        currentSection = "relevantLaws";
+        sections.relevantLaws += line + "\n";
+        continue;
+      }
+
+      // If we're in relevant laws section, keep adding until we hit another bolded section
+      if (currentSection === "relevantLaws") {
+        if (line.startsWith("**") && !line.includes("Relevant Laws")) {
+          currentSection = "otherContent";
+          sections.otherContent += line + "\n";
+        } else {
+          sections.relevantLaws += line + "\n";
+        }
+        continue;
+      }
+
+      // Everything else goes to other content
+      sections.otherContent += line + "\n";
+    }
+
+    return sections;
+  };
+
+  const sections = parseMessage(text);
+  const hasOtherContent = sections.otherContent.trim().length > 0;
+
+  if (!hasOtherContent || isExpanded) {
+    // Show full content
+    return (
+      <div className="whitespace-pre-wrap">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+      </div>
+    );
+  }
+
+  // Show preview mode
+  return (
+    <div className="space-y-3">
+      {/* First paragraph */}
+      {sections.firstParagraph.trim() && (
+        <div className="whitespace-pre-wrap">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {sections.firstParagraph}
+          </ReactMarkdown>
+        </div>
+      )}
+
+      {/* Relevant Laws (if exists) */}
+      {sections.relevantLaws.trim() && (
+        <div className="whitespace-pre-wrap">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {sections.relevantLaws}
+          </ReactMarkdown>
+        </div>
+      )}
+
+      {/* Decipher More button */}
+      <button
+        onClick={() => setIsExpanded(true)}
+        className="text-[#7b1e1e] font-bold hover:text-[#9c1c1c] underline decoration-dotted hover:decoration-solid transition-all duration-200 text-sm"
+      >
+        Decipher More...
+      </button>
+    </div>
+  );
+}
+
 export default function ChatSession({ chatId }: ChatSessionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -106,11 +207,7 @@ export default function ChatSession({ chatId }: ChatSessionProps) {
             }`}
           >
             {msg.role === "advisor" ? (
-              <div className="whitespace-pre-wrap">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {msg.text}
-                </ReactMarkdown>
-              </div>
+              <AdvisorMessage text={msg.text} />
             ) : (
               msg.text
             )}
